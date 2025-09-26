@@ -5,8 +5,10 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     xterm \
-    xvfb \
-    x11vnc \
+    tigervnc-standalone-server \
+    xfonts-base \
+    xfonts-75dpi \
+    xfonts-100dpi \
     xfce4 \
     xfce4-goodies \
     xfconf \
