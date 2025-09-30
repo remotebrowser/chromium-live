@@ -38,9 +38,16 @@ if [ ! -d ~/.themes/Windows-10 ] && [ ! -f ~/.themes/*/index.theme ]; then
     xfconf-query -c xsettings -p /Gtk/ThemeName -s "$GTK_THEME" --create --type string
     gtk-update-icon-cache -f ~/.themes/$GTK_THEME/gtk-*/icons 2>/dev/null || true
 
+    echo "Removing the dock panel..."
+    xfconf-query -c xfce4-panel -p /panels -t int -s 1 -a
+
+    echo "Repositioning the main panel and taskbar to the bottom edge..."
+    xfconf-query -c xfce4-panel -p /panels/panel-1/position -s "p=10;x=0;y=0"
+
     echo "Restarting XFCE to apply new theme..."
     pkill -f xfsettingsd 2>/dev/null || true; sleep 1; xfsettingsd &
     pkill -f xfwm4 2>/dev/null || true; sleep 1; xfwm4 --replace &
+    xfce4-panel -r &
     sleep 1
 
     echo "Desktop theme installed!"
