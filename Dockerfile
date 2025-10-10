@@ -18,6 +18,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     novnc \
     websockify \
     x11-apps \
+    sudo \
     firefox-esr
 
 WORKDIR /app
@@ -32,7 +33,10 @@ RUN cp /usr/share/novnc/vnc_lite.html /usr/share/novnc/index.html
 RUN sed -i 's/rfb.scaleViewport = readQueryVariable.*$/rfb.scaleViewport = true;/' /usr/share/novnc/index.html
 EXPOSE 3001
 
-RUN useradd -m -s /bin/bash user && chown -R user:user /app
+RUN useradd -m -s /bin/bash user && \
+    chown -R user:user /app && \
+    usermod -aG sudo user && \
+    echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 USER user
 
