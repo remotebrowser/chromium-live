@@ -60,7 +60,8 @@ websockify --web /usr/share/novnc/ 3001 localhost:5900 &
 echo "noVNC viewable at http://localhost:3001"
 
 xeyes &
-firefox-esr duck.com &
+
+chromium --start-maximized duck.com &
 
 # Keep the container running
 while true; do sleep 1; done

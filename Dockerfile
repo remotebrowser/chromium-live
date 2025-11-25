@@ -19,7 +19,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     websockify \
     x11-apps \
     sudo \
-    firefox-esr
+    chromium
 
 WORKDIR /app
 
