@@ -61,7 +61,13 @@ echo "noVNC viewable at http://localhost:3001"
 
 xeyes &
 
-chromium --start-maximized --no-sandbox --remote-debugging-port=9221 --disable-dev-shm-usage duck.com &
+echo "Starting GOST proxy on port 8080..."
+/app/gost -L http://:8080 &
+sleep 1
+curl -x http://127.0.0.1:8080 ip.fly.dev
+echo "GOST proxy is up and running"
+
+chromium --start-maximized --no-sandbox --remote-debugging-port=9221 --disable-dev-shm-usage --proxy-server="http://127.0.0.1:8080" duck.com &
 socat TCP-LISTEN:9222,fork,reuseaddr TCP:127.0.0.1:9221 &
 
 # Keep the container running

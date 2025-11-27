@@ -20,9 +20,16 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     x11-apps \
     sudo \
     socat \
+    screen \
     chromium
 
 WORKDIR /app
+
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then ARCH="amd64"; elif [ "$ARCH" = "aarch64" ]; then ARCH="arm64"; fi && \
+    curl -LO https://github.com/go-gost/gost/releases/download/v3.2.6/gost_3.2.6_linux_${ARCH}.tar.gz && \
+    tar -xzf gost_3.2.6_linux_${ARCH}.tar.gz
+
 
 RUN curl -L https://github.com/B00merang-Project/Windows-10/archive/refs/heads/master.tar.gz -o /app/Theme.tar.gz
 
