@@ -45,7 +45,7 @@ EXPOSE 5900
 
 RUN cp /usr/share/novnc/vnc_lite.html /usr/share/novnc/index.html
 RUN sed -i 's/rfb.scaleViewport = readQueryVariable.*$/rfb.scaleViewport = true;/' /usr/share/novnc/index.html
-EXPOSE 3001
+EXPOSE 80
 EXPOSE 9222
 
 RUN useradd -m -s /bin/bash user && \

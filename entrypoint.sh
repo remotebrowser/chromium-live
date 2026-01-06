@@ -40,8 +40,8 @@ chromium --start-maximized --no-sandbox --remote-debugging-port=9221 --disable-d
 socat TCP-LISTEN:9222,fork,reuseaddr TCP:127.0.0.1:9221 &
 
 echo "VNC server started on port 5900"
-websockify --web /usr/share/novnc/ 3001 localhost:5900 &
-echo "noVNC viewable at http://localhost:3001"
+sudo websockify --web /usr/share/novnc/ 80 localhost:5900 &
+echo "noVNC viewable at http://localhost:80"
 
 export GTK_THEME="Windows-10"
 echo "Installing desktop theme..."
