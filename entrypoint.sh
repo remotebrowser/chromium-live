@@ -40,7 +40,8 @@ startxfce4 >/dev/null 2>&1 & sleep 3
 
 xeyes &
 
-chromium --start-maximized --no-sandbox --remote-debugging-port=9221 --disable-dev-shm-usage --proxy-server="http://127.0.0.1:8119" duck.com &
+echo "Starting Chromium..."
+chromium --start-maximized --no-sandbox --remote-debugging-port=9221 --disable-dev-shm-usage --user-data-dir=$HOME/chrome-profile --proxy-server="http://127.0.0.1:8119" duck.com &
 socat TCP-LISTEN:9222,fork,reuseaddr TCP:127.0.0.1:9221 &
 
 echo "VNC server started on port 5900"
