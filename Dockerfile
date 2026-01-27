@@ -23,6 +23,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     sudo \
     socat \
     screen \
+    sqlite3 \
     chromium
 
 
