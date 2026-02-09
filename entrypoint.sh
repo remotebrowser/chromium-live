@@ -7,6 +7,10 @@ if [ $# -gt 0 ]; then
     exec "$@"
 fi
 
+echo "Configuring hosts file for ad blocking..."
+wc -l /hosts
+sudo tee -a /etc/hosts < /hosts > /dev/null
+
 # Continue with Selkies base image init system
 if [ -x /init ]; then
     exec /init
