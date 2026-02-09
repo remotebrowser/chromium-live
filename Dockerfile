@@ -1,63 +1,37 @@
-FROM mirror.gcr.io/library/debian:13-slim
-
+FROM ghcr.io/linuxserver/baseimage-selkies:debiantrixie
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
     curl \
     gnupg \
     ca-certificates \
     tinyproxy \
-    xterm \
-    tigervnc-standalone-server \
-    xfonts-base \
-    xfonts-75dpi \
-    xfonts-100dpi \
-    xfce4 \
-    xfce4-goodies \
-    xfconf \
-    tar \
-    gtk2-engines-murrine \
-    dbus-x11 \
-    novnc \
-    websockify \
     x11-apps \
     sudo \
     socat \
-    screen \
     sqlite3 \
     chromium
 
-
-RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
-RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list >/dev/null
-RUN apt-get update -y && apt-get install -y tailscale
-
-WORKDIR /app
-
-COPY entrypoint.sh /app/entrypoint.sh
-COPY tinyproxy.conf /app/tinyproxy.conf
-
-EXPOSE 5900
-
-RUN cp /usr/share/novnc/vnc_lite.html /usr/share/novnc/index.html
-RUN sed -i 's/rfb.scaleViewport = readQueryVariable.*$/rfb.scaleViewport = true;/' /usr/share/novnc/index.html
-RUN sed -i 's/<div id="top_bar">/<div id="top_bar" style="display:none;">/' /usr/share/novnc/index.html
-EXPOSE 80
-EXPOSE 9222
+COPY entrypoint.sh /
 
 RUN curl -o /tmp/hblock 'https://raw.githubusercontent.com/hectorm/hblock/v3.5.1/hblock' \
   && echo 'd010cb9e0f3c644e9df3bfb387f42f7dbbffbbd481fb50c32683bbe71f994451  /tmp/hblock' | shasum -c \
   && sudo mv /tmp/hblock /usr/local/bin/hblock \
   && sudo chown 0:0 /usr/local/bin/hblock \
   && sudo chmod 755 /usr/local/bin/hblock \
-  && /usr/local/bin/hblock --output /app/hosts --header none
+  && /usr/local/bin/hblock --output /hosts --header none
 
-RUN useradd -m -s /bin/bash user && \
-    chown -R user:user /app && \
-    usermod -aG sudo user && \
-    echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN chmod +x /entrypoint.sh
 
-USER user
+ENV TITLE="Chromium Live"
+ENV RESTART_APP=True
+ENV SELKIES_MANUAL_WIDTH=1920
+ENV SELKIES_MANUAL_HEIGHT=1080
+ENV SELKIES_USE_CPU=True
+ENV SELKIES_AUDIO_ENABLED=False
+ENV SELKIES_MICROPHONE_ENABLED=False
+ENV SELKIES_FILE_TRANSFERS=none
+ENV SELKIES_USE_BROWSER_CURSORS=True
 
-RUN mkdir -p $HOME/chrome-profile
+EXPOSE 3000
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
