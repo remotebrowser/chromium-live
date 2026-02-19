@@ -24,7 +24,12 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     socat \
     screen \
     sqlite3 \
+    python3-requests \
+    python3-websocket \
+    python3-pip \
     chromium
+
+RUN pip3 install --break-system-packages logfire
 
 
 RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
@@ -35,6 +40,7 @@ WORKDIR /app
 
 COPY entrypoint.sh /app/entrypoint.sh
 COPY tinyproxy.conf /app/tinyproxy.conf
+COPY navlog.py /app/navlog.py
 
 EXPOSE 5900
 
@@ -59,5 +65,6 @@ RUN useradd -m -s /bin/bash user && \
 USER user
 
 RUN mkdir -p $HOME/chrome-profile
+RUN mkdir -p $HOME/logs
 
 ENTRYPOINT ["/app/entrypoint.sh"]
