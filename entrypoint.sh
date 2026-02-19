@@ -33,12 +33,17 @@ startxfce4 >/dev/null 2>&1 & sleep 3
 xeyes &
 
 echo "Starting Chromium..."
-chromium --start-maximized --no-sandbox --remote-debugging-port=9221 --disable-dev-shm-usage --user-data-dir=$HOME/chrome-profile --proxy-server="http://127.0.0.1:8119" duck.com &
+chromium --start-maximized --no-sandbox --disable-dev-shm-usage \
+    --remote-debugging-port=9221 --remote-allow-origins=* \
+    --user-data-dir=$HOME/chrome-profile --proxy-server="http://127.0.0.1:8119" duck.com &
 socat TCP-LISTEN:9222,fork,reuseaddr TCP:127.0.0.1:9221 &
 
 echo "VNC server started on port 5900"
 sudo websockify --web /usr/share/novnc/ 80 localhost:5900 &
 echo "noVNC viewable at http://localhost:80"
+
+echo "Starting navlog..."
+python3 /app/navlog.py &
 
 # Keep the container running
 while true; do sleep 1; done
