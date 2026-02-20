@@ -1,6 +1,5 @@
 FROM mirror.gcr.io/library/debian:13-slim
 
-
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
     curl \
     gnupg \
@@ -24,8 +23,29 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     socat \
     screen \
     sqlite3 \
-    chromium
-
+    chromium \
+    cabextract \
+    fontconfig && \
+    sed -i 's/^Components: main$/Components: main contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources && \
+    apt-get update -y && \
+    echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
+    apt-get install -y --no-install-recommends \
+    ttf-mscorefonts-installer \
+    fonts-freefont-otf \
+    fonts-gfs-neohellenic \
+    fonts-indic \
+    fonts-ipafont-gothic \
+    fonts-kacst-one \
+    fonts-liberation \
+    fonts-noto-cjk \
+    fonts-noto-color-emoji \
+    fonts-roboto \
+    fonts-thai-tlwg \
+    fonts-ubuntu \
+    fonts-wqy-zenhei \
+    fonts-open-sans && \
+    fc-cache -f && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
 RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list >/dev/null
