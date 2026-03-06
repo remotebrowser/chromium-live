@@ -47,10 +47,6 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     fc-cache -f && \
     rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
-RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list >/dev/null
-RUN apt-get update -y && apt-get install -y tailscale
-
 WORKDIR /app
 
 COPY entrypoint.sh /app/entrypoint.sh
