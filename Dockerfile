@@ -52,12 +52,6 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     fc-cache -f && \
     rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.noarmor.gpg > /usr/share/keyrings/tailscale-archive-keyring.gpg && \
-    curl -fsSL https://pkgs.tailscale.com/stable/debian/trixie.tailscale-keyring.list > /etc/apt/sources.list.d/tailscale.list && \
-    apt-get update -y && \
-    apt-get install -y --no-install-recommends tailscale && \
-    rm -rf /var/lib/apt/lists/*
-
 RUN case "${TARGETARCH}" in \
       amd64) S6_ARCH="x86_64" ;; \
       arm64) S6_ARCH="aarch64" ;; \
@@ -73,7 +67,7 @@ WORKDIR /app
 
 COPY entrypoint.sh /etc/cont-init.d/00-entrypoint.sh
 COPY tinyproxy.conf /app/tinyproxy.conf
-COPY s6-services/ /etc/services.d/
+COPY root/ /
 
 RUN chmod +x /etc/cont-init.d/00-entrypoint.sh && \
     cp /usr/share/novnc/vnc_lite.html /usr/share/novnc/index.html && \
@@ -88,10 +82,10 @@ RUN curl -o /tmp/hblock 'https://raw.githubusercontent.com/hectorm/hblock/v3.5.1
   && /usr/local/bin/hblock --output /app/hosts --header none
 
 RUN useradd -m -s /bin/bash user && \
-    mkdir -p /home/user/chrome-profile /var/lib/tailscale && \
+    mkdir -p /home/user/chrome-profile && \
     chown -R user:user /app /home/user
 
-RUN chmod +x /etc/services.d/*/run
+RUN chmod +x /etc/s6-overlay/s6-rc.d/*/run
 
 EXPOSE 80
 EXPOSE 5900
