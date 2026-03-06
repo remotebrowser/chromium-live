@@ -1,0 +1,5 @@
+#!/command/with-contenv sh
+export HOME=/home/user
+export DISPLAY=${DISPLAY:-:99}
+export SESSION_MANAGER=""
+exec s6-setuidgid user dbus-launch --exit-with-session startxfce4
