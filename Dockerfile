@@ -4,6 +4,7 @@ ARG TARGETARCH
 ARG S6_OVERLAY_VERSION=v3.2.2.0
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    util-linux \
     curl \
     gnupg \
     ca-certificates \
@@ -91,4 +92,6 @@ EXPOSE 80
 EXPOSE 5900
 EXPOSE 9222
 
-ENTRYPOINT ["/init"]
+# Fly.io runs its own init as PID 1; s6-overlay requires PID 1. Use unshare to create
+# a new PID namespace where /init can run as PID 1.
+ENTRYPOINT ["/usr/bin/unshare", "--pid", "--fork", "--mount-proc", "/init"]
