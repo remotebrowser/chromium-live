@@ -67,10 +67,11 @@ RUN case "${TARGETARCH}" in \
 WORKDIR /app
 
 COPY entrypoint.sh /etc/cont-init.d/00-entrypoint.sh
+COPY start-init.sh /usr/local/bin/start-init.sh
 COPY tinyproxy.conf /app/tinyproxy.conf
 COPY root/ /
 
-RUN chmod +x /etc/cont-init.d/00-entrypoint.sh && \
+RUN chmod +x /etc/cont-init.d/00-entrypoint.sh /usr/local/bin/start-init.sh && \
     cp /usr/share/novnc/vnc_lite.html /usr/share/novnc/index.html && \
     sed -i 's/rfb.scaleViewport = readQueryVariable.*$/rfb.scaleViewport = true;/' /usr/share/novnc/index.html && \
     sed -i 's/<div id="top_bar">/<div id="top_bar" style="display:none;">/' /usr/share/novnc/index.html
@@ -92,6 +93,4 @@ EXPOSE 80
 EXPOSE 5900
 EXPOSE 9222
 
-# Fly.io runs its own init as PID 1; s6-overlay requires PID 1. Use unshare to create
-# a new PID namespace where /init can run as PID 1.
-ENTRYPOINT ["/usr/bin/unshare", "--pid", "--fork", "--mount-proc", "/init"]
+ENTRYPOINT ["/usr/local/bin/start-init.sh"]
