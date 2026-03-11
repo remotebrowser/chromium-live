@@ -4,6 +4,7 @@ ARG TARGETARCH
 ARG S6_OVERLAY_VERSION=v3.2.2.0
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    util-linux \
     curl \
     gnupg \
     ca-certificates \
@@ -66,10 +67,11 @@ RUN case "${TARGETARCH}" in \
 WORKDIR /app
 
 COPY entrypoint.sh /etc/cont-init.d/00-entrypoint.sh
+COPY start-init.sh /usr/local/bin/start-init.sh
 COPY tinyproxy.conf /app/tinyproxy.conf
 COPY root/ /
 
-RUN chmod +x /etc/cont-init.d/00-entrypoint.sh && \
+RUN chmod +x /etc/cont-init.d/00-entrypoint.sh /usr/local/bin/start-init.sh && \
     cp /usr/share/novnc/vnc_lite.html /usr/share/novnc/index.html && \
     sed -i 's/rfb.scaleViewport = readQueryVariable.*$/rfb.scaleViewport = true;/' /usr/share/novnc/index.html && \
     sed -i 's/<div id="top_bar">/<div id="top_bar" style="display:none;">/' /usr/share/novnc/index.html
@@ -91,4 +93,4 @@ EXPOSE 80
 EXPOSE 5900
 EXPOSE 9222
 
-ENTRYPOINT ["/init"]
+ENTRYPOINT ["/usr/local/bin/start-init.sh"]
