@@ -1,0 +1,32 @@
+name: Container
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  container:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - run: docker build -t chromium-live .
+
+      - name: Check container image size
+        run: docker images
+
+      - run: docker run -d -p 80:80 -p 9222:9222 --name chromium-live chromium-live
+
+      - name: Wait until CDP is ready
+        run: while ! curl -s 'http://127.0.0.1:9222/json/version' | grep -q 'Chrome'; do sleep 1; done
+        timeout-minutes: 2
+
+      - run: curl -s 'http://127.0.0.1:9222/json/version'
+
+      - name: Get the container logs
+        run: docker logs --details chromium-live
+        if: always()
