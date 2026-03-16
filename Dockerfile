@@ -77,17 +77,12 @@ RUN chmod +x /etc/cont-init.d/00-entrypoint.sh /usr/local/bin/start-init.sh && \
     sed -i 's/rfb.scaleViewport = readQueryVariable.*$/rfb.scaleViewport = true;/' /usr/share/novnc/index.html && \
     sed -i 's/<div id="top_bar">/<div id="top_bar" style="display:none;">/' /usr/share/novnc/index.html
 
-RUN curl -fsSL -o /app/blocklists-analytics.txt https://raw.githubusercontent.com/hectorm/hmirror/master/data/mozilla-shavar-analytics/list.txt \
-  && curl -fsSL -o /app/blocklists-ads.txt https://raw.githubusercontent.com/hectorm/hmirror/master/data/mozilla-shavar-advertising/list.txt \
-  && curl -fsSL -o /app/blocklists-privacy.txt https://raw.githubusercontent.com/hectorm/hmirror/master/data/easyprivacy/list.txt \
-  && curl -fsSL -o /app/blocklists-adguard.txt https://raw.githubusercontent.com/hectorm/hmirror/master/data/adguard-simplified/list.txt
-
-RUN curl -fsSL -o /tmp/hblock 'https://raw.githubusercontent.com/hectorm/hblock/v3.5.1/hblock' \
+RUN curl -o /tmp/hblock 'https://raw.githubusercontent.com/hectorm/hblock/v3.5.1/hblock' \
   && echo 'd010cb9e0f3c644e9df3bfb387f42f7dbbffbbd481fb50c32683bbe71f994451  /tmp/hblock' | shasum -c \
-  && chmod 755 /tmp/hblock \
-  && cat /app/blocklists-*.txt > /tmp/hblock-deny.list \
-  && /tmp/hblock --output /app/hosts --header none --denylist /tmp/hblock-deny.list --allowlist /app/allowlist.txt \
-  && rm -f /tmp/hblock /tmp/hblock-deny.list
+  && mv /tmp/hblock /usr/local/bin/hblock \
+  && chown 0:0 /usr/local/bin/hblock \
+  && chmod 755 /usr/local/bin/hblock \
+  && /usr/local/bin/hblock --output /app/hosts --header none --allowlist /app/allowlist.txt
 
 RUN useradd -m -s /bin/bash user && \
     mkdir -p /home/user/chrome-profile && \
