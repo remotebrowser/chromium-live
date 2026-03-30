@@ -69,6 +69,7 @@ WORKDIR /app
 COPY entrypoint.sh /etc/cont-init.d/00-entrypoint.sh
 COPY start-init.sh /usr/local/bin/start-init.sh
 COPY tinyproxy.conf /app/tinyproxy.conf
+COPY browser-trace.conf /app/browser-trace.conf
 COPY allowlist.txt /tmp/allowlist.txt
 COPY root/ /
 
@@ -84,6 +85,10 @@ RUN curl -o /tmp/hblock 'https://raw.githubusercontent.com/hectorm/hblock/v3.5.1
   && chmod 755 /usr/local/bin/hblock \
   && /usr/local/bin/hblock --output /app/hosts --header none --allowlist /tmp/allowlist.txt \
   && rm -f /tmp/allowlist.txt
+
+RUN curl -fsSL "https://github.com/remotebrowser/browser-trace/releases/download/v0.1.0/browser-trace-linux-${TARGETARCH}" \
+      -o /usr/local/bin/browser-trace && \
+    chmod +x /usr/local/bin/browser-trace
 
 RUN useradd -m -s /bin/bash user && \
     mkdir -p /home/user/chrome-profile && \
