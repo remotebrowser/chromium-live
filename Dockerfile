@@ -86,7 +86,7 @@ RUN curl -o /tmp/hblock 'https://raw.githubusercontent.com/hectorm/hblock/v3.5.1
   && /usr/local/bin/hblock --output /app/hosts --header none --allowlist /tmp/allowlist.txt \
   && rm -f /tmp/allowlist.txt
 
-RUN curl -fsSL "https://github.com/remotebrowser/browser-trace/releases/latest/download/browser-trace-linux-${TARGETARCH}" \
+RUN curl -fsSL "https://github.com/remotebrowser/browser-trace/releases/download/v0.1.0/browser-trace-linux-${TARGETARCH}" \
       -o /usr/local/bin/browser-trace && \
     chmod +x /usr/local/bin/browser-trace
 
